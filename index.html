@@ -82,31 +82,59 @@
         .ad-space {
             display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
         }
-        .ad-box {
-            width: 100%; height: 600px;
+        /* Estilo para Espacios Disponibles (Laterales) */
+        .ad-box-placeholder {
+            width: 100%; height: 100%; min-height: 400px;
             background: rgba(255,255,255,0.5); 
             border: 2px dashed var(--pink-deep);
             border-radius: var(--border-radius-card);
-            display: flex; align-items: center; justify-content: center; color: var(--text-soft); font-size: 0.7rem; text-align: center;
-            cursor: pointer; /* Indica que es clicable */
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; 
+            text-align: center;
+            color: var(--text-soft); font-size: 0.8rem; 
+            cursor: pointer; 
             transition: transform 0.2s;
+            padding: 20px;
         }
-        .ad-box:hover {
+        .ad-box-placeholder:hover {
             transform: scale(1.02);
             background: rgba(255,255,255,0.8);
             color: var(--red-love);
             border-color: var(--red-love);
         }
+
         @media (max-width: 900px) {
             .app-layout { grid-template-columns: 1fr; }
-            .ad-space { display: none; }
+            .ad-space { display: none; } /* Oculta sidebars en móvil */
         }
 
         /* --- MAIN CONTENT --- */
         .main-stage {
-            position: relative; display: flex; flex-direction: column; width: 100%; max-width: 500px; margin: 0 auto; height: 100vh; overflow-y: auto; padding-bottom: 80px; z-index: 2;
+            position: relative; display: flex; flex-direction: column; width: 100%; max-width: 500px; margin: 0 auto; height: 100vh; overflow-y: auto; padding-bottom: 20px; z-index: 2;
             background: transparent; scroll-behavior: smooth;
         }
+
+        /* Estilos para los Banners de Arriba y Abajo */
+        .banner-ad {
+            background: var(--white);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: var(--border-radius-card);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 1px solid var(--pink-soft);
+            z-index: 10;
+        }
+        .banner-ad:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .banner-ad img { max-width: 150px; height: auto; margin-bottom: 10px; }
+        .banner-ad strong { display: block; font-size: 1rem; color: var(--text-dark); margin-bottom: 5px; }
+        .banner-ad span { font-size: 0.9rem; font-weight: 800; color: var(--red-love); }
 
         /* --- HEADER & STREAK --- */
         header {
@@ -256,15 +284,25 @@
 
 <div class="app-layout">
     
+    <!-- PUBLICIDAD LADO IZQUIERDO (ESPACIO DISPONIBLE) -->
     <div class="ad-space">
-        <div class="ad-box" onclick="contactForAds()">
-            ESPACIOS PUBLICITARIOS<br>DISPONIBLES<br>
-            <span style="font-size:0.6rem; margin-top:5px; display:block;">CONTACTA PARA MÁS INFORMACIÓN</span>
+        <div class="ad-box-placeholder" onclick="contactForAds()">
+            <strong style="font-size:1.2rem; color:var(--text-dark); margin-bottom:10px;">📢</strong>
+            ESPACIOS PUBLICITARIOS<br>DISPONIBLES
+            <div style="margin-top:15px; font-size:0.6rem;">CONTÁCTANOS PARA ANUNCIARTE</div>
         </div>
     </div>
 
     <div class="main-stage" id="main-scroll-container">
         
+        <!-- PUBLICIDAD ARRIBA: NDV PRÉSTAMOS -->
+        <div class="banner-ad" onclick="openWhatsApp('50581556469')">
+            <img src="https://z-cdn-media.chatglm.cn/files/046743f3-670a-41af-b0f6-9a9f30fea1d8.png?auth_key=1871958157-09534efda3124fc7a7fb4b020f7bb2ba-0-c5bdb4b029ff4144619ab5a36890bcfc" alt="NDV Préstamos">
+            <strong>NDV PRÉSTAMOS</strong>
+            <span>+505 8155-6469</span>
+            <div style="font-size: 0.7rem; color: var(--text-soft); margin-top: 5px;">Toca para solicitar tu préstamo</div>
+        </div>
+
         <header>
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h1 onclick="resetAndHome()">💖 COUPLEPLAY</h1>
@@ -313,11 +351,6 @@
                 <div class="card-menu" style="background: var(--pink-soft); border-color: var(--pink-deep);" onclick="returnToStart()">
                     <i>🔙</i><strong>JUGADORES</strong>
                 </div>
-            </div>
-            
-            <div class="ad-box" id="mobile-ad" style="height: 100px; margin: 20px; flex-direction: column; justify-content: center; cursor: pointer;" onclick="contactForAds()">
-                ESPACIOS PUBLICITARIOS<br>
-                <span style="font-size:0.6rem">CONTACTA PARA MÁS INFORMACIÓN</span>
             </div>
         </div>
 
@@ -438,12 +471,22 @@
             </div>
         </div>
 
+        <!-- PUBLICIDAD ABAJO: MARGARITA COMIDA EXPRESS -->
+        <div class="banner-ad" onclick="openWhatsApp('50585637292')">
+            <img src="https://z-cdn-media.chatglm.cn/files/409c31ed-a129-4611-bdde-f721fc660e4f.png?auth_key=1871958157-61112f18c5344b949d301efe5bf79387-0-6cf8eed9ab1192117ea1bb536ce2d830" alt="Margarita Comida Express" style="border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <strong style="color: #e65100;">MI COMIDA EXPRESS</strong>
+            <span style="color: #d84315;">8563-7292</span>
+            <div style="font-size: 0.7rem; color: var(--text-soft); margin-top: 5px;">Margarita Cocina - Pide aquí</div>
+        </div>
+
     </div>
 
+    <!-- PUBLICIDAD LADO DERECHO (ESPACIO DISPONIBLE) -->
     <div class="ad-space">
-        <div class="ad-box" onclick="contactForAds()">
-            ESPACIOS PUBLICITARIOS<br>DISPONIBLES<br>
-            <span style="font-size:0.6rem; margin-top:5px; display:block;">CONTACTA PARA MÁS INFORMACIÓN</span>
+        <div class="ad-box-placeholder" onclick="contactForAds()">
+            <strong style="font-size:1.2rem; color:var(--text-dark); margin-bottom:10px;">📢</strong>
+            ESPACIOS PUBLICITARIOS<br>DISPONIBLES
+            <div style="margin-top:15px; font-size:0.6rem;">CONTÁCTANOS PARA ANUNCIARTE</div>
         </div>
     </div>
 </div>
@@ -514,7 +557,12 @@
     let wheelOptions = [...wheelPresets.cena];
     let currentWheelRotation = 0;
 
-    // --- CONTACTO (WHATSAPP) ---
+    // --- WHATSAPP GENERAL ---
+    function openWhatsApp(number) {
+        window.open(`https://wa.me/${number}`, '_blank');
+    }
+    
+    // --- CONTACTO PARA ANUNCIOS (TU NÚMERO) ---
     function contactForAds() {
         window.open('https://wa.me/50582246593', '_blank');
     }
@@ -990,4 +1038,7 @@
     setTimeout(() => changeWheelCategory('cena'), 100);
 </script>
 </body>
+</html>
+</body>
+
 </html>
