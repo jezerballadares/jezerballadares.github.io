@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#fff5f7">
+    <title>CouplePlay - Pink Edition</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Palette Rosita Original */
+            --bg: #fff5f7;
+            --white: #ffffff;
+            --pink-soft: #ffcad4;
+            --pink-medium: #ffbad0;
+            --pink-deep: #ff8fa3;
+            --red-love: #ff4d6d;
+            --red-spicy: #9b001c;
+            --arcade-blue: #4cc9f0;
+            --arcade-yellow: #fee440;
+            --text-dark: #594145;
+            --text-soft: #8a7075;
+            
+            /* Effects */
+            --shadow-soft: 0 10px 25px rgba(255, 143, 163, 0.3);
+            --border-radius-card: 25px;
+            --border-radius-btn: 15px;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+            overflow: hidden; 
+            position: relative;
+        }
+
+        /* --- BACKGROUND PARTICLES --- */
+        .particles {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute; display: block; bottom: -50px;
+            background: rgba(255, 77, 109, 0.2);
+            border-radius: 50%; animation: floatUp 25s linear infinite;
+        }
+        .particle:nth-child(1) { left: 10%; width: 20px; height: 20px; animation-delay: 0s; background: rgba(255, 202, 212, 0.5); }
+        .particle:nth-child(2) { left: 30%; width: 40px; height: 40px; animation-delay: 2s; animation-duration: 18s; }
+        .particle:nth-child(3) { left: 50%; width: 25px; height: 25px; animation-delay: 4s; background: rgba(255, 143, 163, 0.4); }
+        .particle:nth-child(4) { left: 70%; width: 35px; height: 35px; animation-delay: 6s; animation-duration: 22s; }
+        .particle:nth-child(5) { left: 90%; width: 30px; height: 30px; animation-delay: 8s; background: rgba(255, 202, 212, 0.5); }
+        .particle.heart {
+            width: 20px; height: 20px; background: rgba(255, 77, 109, 0.3); border-radius: 0; transform: rotate(45deg);
+        }
+        .particle.heart:before, .particle.heart:after {
+            content: ""; position: absolute; width: 20px; height: 20px; background: inherit; border-radius: 50%;
+        }
+        .particle.heart:before { left: -10px; } .particle.heart:after { top: -10px; }
+        .particle:nth-child(6) { left: 20%; animation-delay: 3s; animation-duration: 20s; }
+        .particle:nth-child(7) { left: 80%; animation-delay: 7s; animation-duration: 28s; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- LAYOUT GRID --- */
+        .app-layout {
+            display: grid; grid-template-columns: 250px 1fr 250px; width: 100%; height: 100vh; z-index: 1;
+        }
+        .ad-space {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+        }
+        .ad-box {
+            width: 100%; height: 600px;
+            background: rgba(255,255,255,0.5); 
+            border: 2px dashed var(--pink-deep);
+            border-radius: var(--border-radius-card);
+            display: flex; align-items: center; justify-content: center; color: var(--text-soft); font-size: 0.7rem; text-align: center;
+            cursor: pointer; /* Indica que es clicable */
+            transition: transform 0.2s;
+        }
+        .ad-box:hover {
+            transform: scale(1.02);
+            background: rgba(255,255,255,0.8);
+            color: var(--red-love);
+            border-color: var(--red-love);
+        }
+        @media (max-width: 900px) {
+            .app-layout { grid-template-columns: 1fr; }
+            .ad-space { display: none; }
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-stage {
+            position: relative; display: flex; flex-direction: column; width: 100%; max-width: 500px; margin: 0 auto; height: 100vh; overflow-y: auto; padding-bottom: 80px; z-index: 2;
+            background: transparent; scroll-behavior: smooth;
+        }
+
+        /* --- HEADER & STREAK --- */
+        header {
+            padding: 15px 20px; text-align: center;
+            background: var(--white);
+            box-shadow: 0 4px 15px rgba(255, 143, 163, 0.15);
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            z-index: 20; position: sticky; top: 0;
+        }
+
+        h1 { 
+            margin: 0; font-family: 'Press Start 2P', cursive; font-size: 0.8rem; 
+            color: var(--red-love); text-shadow: 2px 2px 0px var(--pink-soft);
+            cursor: pointer; letter-spacing: -1px;
+            line-height: 1.5;
+        }
+
+        .streak-container {
+            display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px;
+        }
+        .streak-badge {
+            background: var(--arcade-yellow); color: var(--text-dark);
+            padding: 5px 15px; border: 3px solid var(--text-dark); font-family: 'Press Start 2P';
+            border-radius: 50px; font-size: 0.6rem; font-weight: 800; display: flex; align-items: center; gap: 5px;
+            box-shadow: 3px 3px 0px var(--pink-deep);
+        }
+        .streak-flame { animation: bounce 1s infinite alternate; }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-3px); } }
+
+        /* --- UI COMPONENTS --- */
+        .btn {
+            background: var(--red-love); color: white; border: none; padding: 18px;
+            border-radius: var(--border-radius-btn); width: 100%; font-weight: 800; font-size: 1rem; margin-top: 10px; cursor: pointer;
+            box-shadow: 0 6px 15px rgba(255, 77, 109, 0.4); transition: all 0.2s; font-family: 'Poppins', sans-serif;
+        }
+        .btn:active { transform: scale(0.98); box-shadow: 0 2px 5px rgba(255, 77, 109, 0.4); }
+        
+        .btn-secondary { background: var(--arcade-blue); box-shadow: 0 6px 15px rgba(76, 201, 240, 0.4); }
+        .btn-outline { background: var(--white); border: 3px solid var(--text-dark); color: var(--text-dark); box-shadow: 3px 3px 0 var(--pink-soft); }
+        .btn-back { background: var(--pink-soft); color: var(--text-dark); width: auto; display: inline-block; padding: 10px 25px; font-size: 0.8rem; box-shadow: none; border: 2px solid var(--text-dark); }
+
+        .arcade-card {
+            background: var(--white); border-radius: var(--border-radius-card);
+            padding: 25px; margin: 20px; box-shadow: var(--shadow-soft);
+            border: 3px solid var(--pink-soft);
+            animation: slideUp 0.4s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        input {
+            width: 100%; padding: 15px; border: 3px solid var(--pink-deep); background: #fff;
+            color: var(--text-dark); border-radius: var(--border-radius-btn); font-family: 'Poppins', sans-serif; font-weight: 700;
+            margin-bottom: 10px; outline: none; text-align: center; transition: 0.3s; font-size: 1rem;
+        }
+        input:focus { border-color: var(--red-love); box-shadow: 0 0 0 4px var(--pink-soft); }
+
+        /* --- GRID MENU --- */
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+        .card-menu {
+            background: var(--white); padding: 25px 15px; border-radius: var(--border-radius-card);
+            text-align: center; cursor: pointer; transition: 0.3s; box-shadow: var(--shadow-soft);
+            border: 3px solid transparent;
+        }
+        .card-menu:hover { transform: translateY(-5px); border-color: var(--pink-deep); }
+        .card-menu i { font-size: 2.8rem; display: block; margin-bottom: 15px; }
+        .card-menu strong { font-size: 0.9rem; color: var(--text-dark); font-weight: 800; }
+
+        /* --- SECTIONS & UTILS --- */
+        .section { display: none; padding-bottom: 40px; }
+        .section.active { display: block; }
+        
+        .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0; justify-content: center; }
+        .player-chip {
+            background: var(--arcade-yellow); color: var(--text-dark); padding: 8px 15px; font-weight: 800; font-size: 0.8rem;
+            border-radius: 50px; border: 2px solid var(--text-dark); box-shadow: 2px 2px 0 var(--pink-deep);
+        }
+
+        /* --- GAME SPECIFICS --- */
+        .turn-announcer {
+            background: var(--text-dark); color: var(--arcade-yellow);
+            padding: 10px; font-family: 'Press Start 2P', cursive; font-size: 0.7rem; margin: 0 20px 20px 20px; text-align: center;
+            border-radius: 15px; box-shadow: 4px 4px 0 var(--pink-deep);
+            word-wrap: break-word;
+        }
+
+        /* Cartas */
+        .deck { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .card { aspect-ratio: 3/4; perspective: 1000px; cursor: pointer; }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            padding: 15px; text-align: center; border: 3px solid var(--text-dark);
+        }
+        .card-front { background: var(--pink-soft); font-size: 2.5rem; color: var(--red-love); }
+        .card-back { background: var(--white); color: var(--text-dark); transform: rotateY(180deg); font-weight: 700; font-size: 0.9rem; }
+        .card.completed .card-back { background: #d1ffcf !important; border-color: #2d6a4f !important; color: #1b4332 !important; }
+
+        /* Ruleta */
+        .wheel-box { position: relative; width: 280px; height: 280px; margin: 20px auto; }
+        #wheel { width: 100%; height: 100%; border-radius: 50%; border: 8px solid var(--text-dark); box-shadow: var(--shadow-soft); transition: transform 4s cubic-bezier(0.1, 0, 0.1, 1); }
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 40px; height: 40px; background: var(--red-love); clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10; border-top: 3px solid var(--text-dark); }
+
+        /* Match Bar */
+        .match-progress { height: 15px; background: var(--pink-soft); border-radius: 20px; margin-bottom: 25px; overflow: hidden; border: 3px solid var(--text-dark); }
+        .match-bar { height: 100%; background: linear-gradient(90deg, var(--red-love), var(--arcade-yellow)); width: 0%; transition: width 0.5s; }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(255, 245, 247, 0.85); 
+            display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-card {
+            background: var(--white); border: 4px solid var(--text-dark);
+            border-radius: 30px; padding: 30px; width: 100%; max-width: 400px;
+            text-align: center; position: relative; box-shadow: var(--shadow-soft);
+        }
+        
+        .premium-btn {
+            background: var(--red-love); color: white; font-size: 0.7rem; padding: 8px 15px; border-radius: 20px;
+            font-weight: 800; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 77, 109, 0.3); transition: 0.2s; border:none;
+        }
+        .premium-btn:hover { transform: scale(1.05); }
+        .premium-btn:active { transform: scale(0.95); }
+
+        /* --- START SCREEN --- */
+        #start-screen { display: flex; flex-direction: column; justify-content: center; height: 80vh; }
+        .logo-anim { font-size: 5rem; margin-bottom: 10px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 5px 0 var(--pink-soft)); }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+
+    </style>
+</head>
+<body>
+
+<div class="particles">
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle"></span>
+    <span class="particle heart"></span>
+    <span class="particle heart"></span>
+</div>
+
+<div class="app-layout">
+    
+    <div class="ad-space">
+        <div class="ad-box" onclick="contactForAds()">
+            ESPACIOS PUBLICITARIOS<br>DISPONIBLES<br>
+            <span style="font-size:0.6rem; margin-top:5px; display:block;">CONTACTA PARA MÁS INFORMACIÓN</span>
+        </div>
+    </div>
+
+    <div class="main-stage" id="main-scroll-container">
+        
+        <header>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h1 onclick="resetAndHome()">💖 COUPLEPLAY</h1>
+                <div class="premium-btn" style="background:var(--arcade-blue)" onclick="shareApp()">COMPARTIR 🔗</div>
+            </div>
+            
+            <div class="streak-container">
+                <div class="streak-badge">
+                    <span class="streak-flame">🔥</span>
+                    <span id="streak-counter">0 DÍAS</span>
+                </div>
+                <div id="streak-reward" style="font-size: 0.7rem; color: var(--red-love); font-weight: 600;"></div>
+            </div>
+        </header>
+
+        <div id="start-screen" class="section active">
+            <div class="arcade-card" style="text-align: center;">
+                <div class="logo-anim">🧸</div>
+                <h2 style="font-family: 'Press Start 2P'; font-size: 0.9rem; margin-bottom: 30px; color: var(--red-love);">¿QUIÉNES JUEGAN HOY?</h2>
+                
+                <input type="text" id="global-p1" placeholder="JUGADOR 1" autocomplete="off">
+                <input type="text" id="global-p2" placeholder="JUGADOR 2" autocomplete="off">
+                
+                <button class="btn" onclick="initArcade()">¡A JUGAR!</button>
+                <p style="font-size: 0.7rem; color: var(--text-soft); margin-top: 20px;">Hecho por code 505 💖</p>
+            </div>
+        </div>
+
+        <div id="home" class="section">
+            <div class="grid-menu">
+                <div class="card-menu" onclick="showSection('match')">
+                    <i style="color: var(--arcade-blue)">🧩</i><strong>MATCH</strong>
+                </div>
+                <div class="card-menu" onclick="showSection('espejo')">
+                    <i style="color: var(--pink-deep)">🪞</i><strong>ESPEJO</strong>
+                </div>
+                <div class="card-menu" onclick="showSection('cartas')">
+                    <i style="color: var(--red-love)">🃏</i><strong>DESTINO</strong>
+                </div>
+                <div class="card-menu" onclick="showSection('ruleta')">
+                    <i style="color: var(--arcade-yellow)">🎡</i><strong>RULETA</strong>
+                </div>
+                <div class="card-menu" onclick="showSection('baul')">
+                    <i style="color: var(--text-dark)">📖</i><strong>BAÚL</strong>
+                </div>
+                <div class="card-menu" style="background: var(--pink-soft); border-color: var(--pink-deep);" onclick="returnToStart()">
+                    <i>🔙</i><strong>JUGADORES</strong>
+                </div>
+            </div>
+            
+            <div class="ad-box" id="mobile-ad" style="height: 100px; margin: 20px; flex-direction: column; justify-content: center; cursor: pointer;" onclick="contactForAds()">
+                ESPACIOS PUBLICITARIOS<br>
+                <span style="font-size:0.6rem">CONTACTA PARA MÁS INFORMACIÓN</span>
+            </div>
+        </div>
+
+        <div id="match" class="section">
+            <div id="match-setup" class="arcade-card">
+                <h2 style="font-family: 'Press Start 2P'; font-size: 0.8rem; text-align:center; color: var(--red-love);">TEST DE PAREJA</h2>
+                <p style="text-align:center; font-size: 0.9rem; margin-bottom: 25px;">15 Preguntas para ver si conectan.</p>
+                <button class="btn" onclick="startMatch()">INICIAR TEST</button>
+                <button class="btn btn-secondary" style="margin-top: 10px;" onclick="generateNewMatchQuestions()">🔄 NUEVAS PREGUNTAS</button>
+                <div style="text-align:center; margin-top: 20px;">
+                     <button class="btn btn-back" onclick="showSection('home')">VOLVER</button>
+                </div>
+            </div>
+
+            <div id="match-game" style="display:none;">
+                <div class="match-progress"><div id="match-bar" class="match-bar"></div></div>
+                <div class="turn-announcer" id="match-turn-display">TURNO: -</div>
+                
+                <div class="arcade-card">
+                    <h3 id="match-q-text" style="text-align:center; margin-top:0; color: var(--red-love); font-size: 1.2rem;">¿Pregunta?</h3>
+                    <div id="match-inputs" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                </div>
+                <div style="text-align:center;">
+                    <button class="btn btn-back" onclick="resetAndHome()">SALIR</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="espejo" class="section">
+            <div id="espejo-setup" class="arcade-card">
+                <h2 style="font-family: 'Press Start 2P'; font-size: 0.8rem; color: var(--red-love);">EL ESPEJO</h2>
+                <p id="espejo-names-display" style="font-weight: 800; text-align: center; color: var(--text-dark); font-size: 1.1rem;"></p>
+                <p style="text-align:center; font-size: 0.9rem; margin-bottom: 25px;">¿Cuánto se conocen realmente?</p>
+                <button class="btn" onclick="startEspejo()">COMENZAR</button>
+                <div style="text-align:center; margin-top: 20px;">
+                    <button class="btn btn-back" onclick="showSection('home')">VOLVER</button>
+                </div>
+            </div>
+
+            <div id="espejo-game" style="display:none;">
+                <div class="turn-announcer" id="espejo-round-tag">ROUND 1</div>
+                <div class="arcade-card" style="text-align:center;">
+                    <p id="espejo-player-notif" style="font-weight: 800; color: var(--red-love); font-size: 1rem; margin-bottom: 15px;"></p>
+                    <h3 id="espejo-question" style="margin: 25px 0; color: var(--text-dark); font-size: 1.3rem;">?</h3>
+                    <input type="text" id="espejo-ans" placeholder="Escribe aquí..." autocomplete="off">
+                    <button class="btn" id="espejo-btn" onclick="handleEspejo()">CONFIRMAR</button>
+                </div>
+                <div style="text-align:center;">
+                    <button class="btn btn-back" onclick="resetAndHome()">SALIR</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="cartas" class="section">
+            <div id="destino-setup" class="arcade-card">
+                <h2 style="font-family: 'Press Start 2P'; font-size: 0.8rem; color: var(--red-love);">DESTINO</h2>
+                <div id="dest-chips" class="chip-container"></div>
+                
+                <p style="text-align: center; margin-top: 25px; font-size: 0.9rem; font-weight: 600;">ELIGE INTENSIDAD:</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <button id="btn-mode-normal" class="btn btn-secondary" onclick="setDestinoMode('normal')">TIERNO 😇</button>
+                        <button id="btn-mode-spicy" class="btn btn-outline" style="border-color: var(--red-spicy); color: var(--red-spicy);" onclick="setDestinoMode('spicy')">PICANTE 🌶️</button>
+                </div>
+
+                <button class="btn" style="margin-top: 25px;" onclick="startDestino()">REPARTIR CARTAS</button>
+                 <div style="text-align:center; margin-top: 20px;">
+                    <!-- Este botón vuelve al Home -->
+                    <button class="btn btn-back" onclick="showSection('home')">VOLVER AL MENÚ</button>
+                </div>
+            </div>
+
+            <div id="destino-game" style="display:none;">
+                <div id="dest-turn" class="turn-announcer">TURNO DE: -</div>
+                <div class="deck" id="dest-deck"></div>
+                <div style="margin-top: 25px; text-align: center;">
+                    <button class="btn btn-secondary" style="margin-bottom: 15px;" onclick="refreshDestino()">NUEVAS CARTAS 🔄</button>
+                    <br>
+                    <!-- MODIFICADO: Ahora este botón te devuelve a la selección de modo -->
+                    <button class="btn btn-back" onclick="exitDestinoGame()">VOLVER A MODO</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="ruleta" class="section">
+            <div class="arcade-card">
+                <div id="wheel-turn" style="text-align: center; font-weight: 800; color: var(--text-dark); margin-bottom: 15px; font-size: 1.1rem;"></div>
+                <div class="wheel-box">
+                    <div class="pointer"></div>
+                    <canvas id="wheel" width="300" height="300"></canvas>
+                </div>
+                <button class="btn" onclick="spinWheel()">¡GIRAR! 🎡</button>
+            </div>
+
+            <div class="arcade-card" style="padding: 20px;">
+                <h3 style="text-align:center; margin-top:0; color: var(--red-love);">Categorías</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <button id="cat-cena" class="btn btn-outline" style="font-size: 0.7rem; flex:1 0 40%; padding: 10px;" onclick="changeWheelCategory('cena')">CENA</button>
+                    <button id="cat-tareas" class="btn btn-outline" style="font-size: 0.7rem; flex:1 0 40%; padding: 10px;" onclick="changeWheelCategory('tareas')">TAREAS</button>
+                    <button id="cat-citas" class="btn btn-outline" style="font-size: 0.7rem; flex:1 0 40%; padding: 10px;" onclick="changeWheelCategory('citas')">CITAS</button>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="custom-option-input" placeholder="Añadir opción..." style="margin:0; flex-grow: 1;" autocomplete="off">
+                    <button class="btn" style="width: auto; margin: 0; padding: 0 20px;" onclick="addCustomOption()">+</button>
+                </div>
+                <button class="btn btn-outline" style="font-size: 0.7rem; width: 100%;" onclick="clearCurrentList()">LIMPIAR LISTA ACTUAL</button>
+            </div>
+            <div style="text-align:center; margin-bottom: 20px;">
+                <button class="btn btn-back" onclick="showSection('home')">VOLVER</button>
+            </div>
+        </div>
+
+        <div id="baul" class="section">
+            <h2 style="font-family: 'Press Start 2P'; font-size: 0.9rem; text-align: center; color: var(--red-love); margin: 30px 0;">BAÚL DE RECUERDOS</h2>
+            <div id="baul-list" style="padding: 10px;"></div>
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="btn btn-back" onclick="showSection('home')">VOLVER</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="ad-space">
+        <div class="ad-box" onclick="contactForAds()">
+            ESPACIOS PUBLICITARIOS<br>DISPONIBLES<br>
+            <span style="font-size:0.6rem; margin-top:5px; display:block;">CONTACTA PARA MÁS INFORMACIÓN</span>
+        </div>
+    </div>
+</div>
+
+<div id="modal" class="modal-overlay">
+    <div class="modal-card">
+        <div id="modal-icon" style="font-size: 5rem; margin-bottom: 15px;">🏆</div>
+        <h2 id="modal-title" style="font-family: 'Press Start 2P'; font-size: 0.9rem; color: var(--red-love); margin-bottom: 15px; line-height: 1.4;">TITLE</h2>
+        <p id="modal-desc" style="color: var(--text-dark); margin: 20px 0; font-size: 1rem; line-height: 1.5;">Description.</p>
+        <div id="modal-btns" style="display: flex; flex-direction: column; gap: 15px;"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+<script>
+    // --- DATABASE & CONTENT ---
+    const DB = {
+        espejo: [
+            "¿Cuál es su mayor miedo?", "¿Su comida favorita?", "¿Su lugar soñado?", 
+            "¿Color favorito?", "¿Su mejor recuerdo contigo?", "¿Qué es lo que más le gusta de ti?",
+            "¿Canción favorita?", "¿Película favorita?", "¿Su sueño frustrado?", "¿Postre favorito?"
+        ],
+        match: [
+            { q: "¿Playa o Montaña?", type: "choice", opts: ["Playa 🏖️", "Montaña 🏔️"] },
+            { q: "¿Comida Favorita?", type: "text" },
+            { q: "¿Perros o Gatos?", type: "choice", opts: ["Perros 🐶", "Gatos 🐱"] },
+            { q: "¿Día ideal?", type: "choice", opts: ["Pelis en casa 📺", "Salir de aventura 🌲"] },
+            { q: "¿Quién es más ordenado?", type: "choice", opts: ["Jugador 1", "Jugador 2"] },
+            { q: "¿Dulce o Salado?", type: "choice", opts: ["Dulce 🍫", "Salado 🍟"] },
+            { q: "¿Película de terror o Comedia?", type: "choice", opts: ["Terror 👻", "Comedia 😂"] },
+            { q: "¿Quién cocina mejor?", type: "choice", opts: ["Jugador 1", "Jugador 2"] },
+            { q: "¿Lugar para vivir?", type: "choice", opts: ["Ciudad 🏙️", "Campo 🏡"] }
+        ],
+        retos: {
+            normal: [
+                "Dale un beso de 10 seg", "Nombra 3 cosas que amas de él/ella", "Masaje de hombros (2 min)", 
+                "Baila sin música", "Imita a un animal tierno", "Susurra un secreto", 
+                "Beso en la frente", "Abrazo de oso gigante", "Mírense fijo a los ojos 30 seg", "Dile el piropo más cursi"
+            ],
+            spicy: [
+                "Quita una prenda (elige cuál)", "Da un beso donde la otra persona elija", 
+                "Toca a la otra persona donde ella elija", "Susurra algo atrevido al oído", 
+                "Verdad o reto picante", "Haz un reto físico atrevido", 
+                "Beso en el cuello por 15 segundos", "Masaje sensual en las manos"
+            ]
+        }
+    };
+
+    // --- STATE MANAGEMENT ---
+    let state = {
+        players: [],
+        turn: 0,
+        destinoMode: 'normal',
+        espejo: { qList: [], idx: 0, score: 0, ansA: '', step: 0, names: [], activePlayer: 0 },
+        destino: { pool: [], round: 0 },
+        ruleta: { category: 'cena', turn: '' },
+        match: { questions: [], qIdx: 0, p1Ans: null, p2Ans: null, score: 0, step: 0 }
+    };
+
+    // Clonamos los presets para no modificar el original permanentemente en la sesión actual
+    let wheelPresets = JSON.parse(JSON.stringify({
+        cena: ["Sushi", "Pizza", "Cena Pro", "Burgers", "Pasta", "Tacos"],
+        tareas: ["Platos", "Basura", "Cocinar", "Limpiar", "Cama", "Ropa"],
+        citas: ["Cine", "Caminata", "Gaming", "Picnic", "Museo", "Bar"]
+    }));
+    
+    let wheelOptions = [...wheelPresets.cena];
+    let currentWheelRotation = 0;
+
+    // --- CONTACTO (WHATSAPP) ---
+    function contactForAds() {
+        window.open('https://wa.me/50582246593', '_blank');
+    }
+
+    // --- INITIALIZATION ---
+    window.onload = () => { initWheel(); checkStreak(); };
+
+    // --- CORE & STREAK SYSTEM ---
+    function initArcade() {
+        const p1 = document.getElementById('global-p1').value.trim();
+        const p2 = document.getElementById('global-p2').value.trim();
+        
+        if(!p1 || !p2) {
+            alert("⚠️ ¡Por favor escriban sus nombres!");
+            return;
+        }
+        
+        state.players = [p1, p2];
+        checkStreak(); 
+        document.getElementById('espejo-names-display').innerText = `${p1} 💖 ${p2}`;
+        renderDestChips();
+        showSection('home');
+        try {
+            const container = document.querySelector('.main-stage');
+            const target = document.getElementById('home');
+            if (container && target) {
+                container.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+            } else {
+                target && target.scrollIntoView({ behavior: 'smooth' });
+            }
+        } catch (e) { }
+    }
+
+    function checkStreak() {
+        const lastLogin = localStorage.getItem('cp_last_login');
+        let streak = parseInt(localStorage.getItem('cp_streak') || '0');
+        const today = new Date().setHours(0,0,0,0);
+        
+        if (lastLogin) {
+            const lastDate = new Date(parseInt(lastLogin)).setHours(0,0,0,0);
+            const diff = (today - lastDate) / (1000 * 60 * 60 * 24);
+            
+            if (diff === 1) { 
+                streak++;
+                showModal("🔥", "¡RACHA AUMENTADA!", `¡Llevan ${streak} días seguidos jugando!`, [{txt:"¡GENIAL!", primary:true, fn:closeModal}]);
+            } else if (diff > 1) { 
+                streak = 1;
+            }
+        } else {
+            streak = 1;
+        }
+
+        localStorage.setItem('cp_last_login', Date.now());
+        localStorage.setItem('cp_streak', streak);
+        
+        document.getElementById('streak-counter').innerText = `${streak} DÍAS`;
+        
+        let reward = "";
+        if(streak >= 3) reward = "✨ Efectos desbloqueados";
+        if(streak >= 7) reward = "🎁 Minijuego extra";
+        if(streak >= 30) reward = "👑 Pareja Legendaria";
+        document.getElementById('streak-reward').innerText = reward;
+    }
+
+    // --- NAVIGATION ---
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'ruleta') {
+            state.ruleta.turn = Math.random() < 0.5 ? state.players[0] : state.players[1];
+            updateWheelTurn();
+            setTimeout(initWheel, 50); 
+        }
+        if(id === 'baul') renderBaul();
+        vibrate(10);
+    }
+
+    function returnToStart() {
+        document.getElementById('start-screen').classList.add('active');
+        document.getElementById('home').classList.remove('active');
+    }
+
+    function resetAndHome() {
+        state.destino.round = 0;
+        document.querySelectorAll('input:not(#global-p1):not(#global-p2):not(#modal input)').forEach(i => i.value = '');
+        
+        document.getElementById('espejo-setup').style.display = 'block';
+        document.getElementById('espejo-game').style.display = 'none';
+        document.getElementById('destino-setup').style.display = 'block';
+        document.getElementById('destino-game').style.display = 'none';
+        document.getElementById('match-setup').style.display = 'block';
+        document.getElementById('match-game').style.display = 'none';
+        
+        closeModal();
+        showSection('home');
+
+        try {
+             document.getElementById('main-scroll-container').scrollTop = 0;
+        } catch(e){}
+    }
+
+    function vibrate(ms) { if(navigator.vibrate) navigator.vibrate(ms); }
+
+    // --- MATCH LOGIC ---
+    function generateNewMatchQuestions() {
+        state.match.questions = [...DB.match].sort(() => Math.random() - 0.5).slice(0, 15);
+        alert("¡Nuevas preguntas listas!");
+    }
+
+    function startMatch() {
+        if(state.players.length < 2) return alert("Faltan jugadores");
+        if(state.match.questions.length === 0) generateNewMatchQuestions();
+        
+        state.match.qIdx = 0; state.match.score = 0; state.match.step = 0;
+        state.match.p1Ans = null; state.match.p2Ans = null;
+
+        document.getElementById('match-setup').style.display = 'none';
+        document.getElementById('match-game').style.display = 'block';
+        loadMatchQuestion();
+    }
+
+    function loadMatchQuestion() {
+        const q = state.match.questions[state.match.qIdx];
+        if(!q) return endMatch();
+
+        const progress = ((state.match.qIdx) / 15) * 100;
+        document.getElementById('match-bar').style.width = `${progress}%`;
+
+        const currentPlayer = state.match.step === 0 ? state.players[0] : state.players[1];
+        document.getElementById('match-turn-display').innerText = `TURNO: ${currentPlayer}`;
+        document.getElementById('match-q-text').innerText = q.q;
+
+        const container = document.getElementById('match-inputs');
+        container.innerHTML = '';
+
+        if(q.type === 'choice') {
+            q.opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-outline';
+                btn.style.marginTop = "10px";
+                btn.style.padding = "15px";
+                let txt = opt;
+                if(opt === "Jugador 1") txt = state.players[0];
+                if(opt === "Jugador 2") txt = state.players[1];
+                btn.innerText = txt;
+                btn.onclick = () => handleMatchAnswer(txt);
+                container.appendChild(btn);
+            });
+        } else {
+            const inp = document.createElement('input');
+            inp.type = "text"; inp.placeholder = "Escribe tu respuesta..."; inp.id = "match-text-input";
+            setTimeout(() => inp.focus(), 100);
+            
+            const btn = document.createElement('button');
+            btn.className = 'btn'; btn.innerText = "CONFIRMAR";
+            btn.onclick = () => { 
+                const val = document.getElementById('match-text-input').value;
+                if(val) handleMatchAnswer(val); 
+            };
+            container.appendChild(inp); container.appendChild(btn);
+        }
+    }
+
+    function handleMatchAnswer(ans) {
+        if(state.match.step === 0) {
+            state.match.p1Ans = ans; state.match.step = 1; loadMatchQuestion();
+        } else {
+            state.match.p2Ans = ans;
+            if(state.match.p1Ans.toLowerCase() === state.match.p2Ans.toLowerCase()) {
+                state.match.score++; confetti({ particleCount: 40, spread: 70, origin: { y: 0.7 }, colors: ['#ff4d6d', '#fee440'] });
+            }
+            state.match.qIdx++; state.match.step = 0; loadMatchQuestion();
+        }
+    }
+
+    function endMatch() {
+        const total = 15;
+        const score = state.match.score;
+        const pct = Math.round((score/total)*100);
+        saveBaul("🧩", "Resultado Test", `${pct}% de compatibilidad (${score}/${total})`);
+        showModal("🧩", `RESULTADO: ${pct}%`, score > 10 ? "¡Son tal para cual! 🔥" : "¡A seguir conociéndose! 🥰", [{ txt: "VOLVER", primary: true, fn: resetAndHome }]);
+    }
+
+    // --- MIRROR LOGIC ---
+    function startEspejo() {
+        state.espejo = {
+            names: [state.players[0], state.players[1]],
+            qList: [...DB.espejo].sort(() => Math.random() - 0.5).slice(0, 6),
+            idx: 0, score: 0, step: 0, ansA: ''
+        };
+        document.getElementById('espejo-setup').style.display = 'none';
+        document.getElementById('espejo-game').style.display = 'block';
+        loadEspejoRound();
+    }
+
+    function loadEspejoRound() {
+        const q = state.espejo.qList[state.espejo.idx];
+        if(!q) return endEspejo();
+
+        const isP1Subject = state.espejo.idx % 2 === 0;
+        const subject = isP1Subject ? state.espejo.names[0] : state.espejo.names[1];
+        const guesser = isP1Subject ? state.espejo.names[1] : state.espejo.names[0];
+
+        document.getElementById('espejo-round-tag').innerText = `ROUND ${state.espejo.idx + 1}`;
+        document.getElementById('espejo-question').innerText = q;
+        const input = document.getElementById('espejo-ans');
+        input.value = ''; 
+        state.espejo.step = 0; 
+        updateEspejoUI(subject, guesser);
+        setTimeout(() => input.focus(), 100);
+    }
+
+    function updateEspejoUI(subject, guesser) {
+        const label = document.getElementById('espejo-player-notif');
+        if(state.espejo.step === 0) {
+            label.innerText = `🔒 ${subject}: Responde en secreto`;
+            document.getElementById('espejo-ans').placeholder = "Tu respuesta sincera...";
+        } else {
+            label.innerText = `🤔 ${guesser}: ¿Qué crees que dijo ${subject}?`;
+            document.getElementById('espejo-ans').placeholder = "Intenta adivinar...";
+        }
+    }
+
+    function handleEspejo() {
+        const val = document.getElementById('espejo-ans').value.trim();
+        if(!val) return;
+        const isP1Subject = state.espejo.idx % 2 === 0;
+        const subject = isP1Subject ? state.espejo.names[0] : state.espejo.names[1];
+        const guesser = isP1Subject ? state.espejo.names[1] : state.espejo.names[0];
+
+        if(state.espejo.step === 0) {
+            state.espejo.ansA = val; state.espejo.step = 1;
+            document.getElementById('espejo-ans').value = '';
+            updateEspejoUI(subject, guesser);
+            setTimeout(() => document.getElementById('espejo-ans').focus(), 100);
+        } else {
+            const match = state.espejo.ansA.toLowerCase() === val.toLowerCase();
+            if(match) {
+                state.espejo.score++; confetti({ colors: ['#ff4d6d', '#ffcad4'] });
+                showModal("💖", "¡COINCIDENCIA!", `${guesser} sabía que ${subject} diría: "${state.espejo.ansA}"`, [{ txt: "SIGUIENTE", primary: true, fn: () => { nextEspejo(); closeModal(); } }]);
+            } else {
+                showModal("❌", "CASI...", `${subject} dijo: "${state.espejo.ansA}"`, [{ txt: "SIGUIENTE", primary: true, fn: () => { nextEspejo(); closeModal(); } }]);
+            }
+        }
+    }
+
+    function nextEspejo() { state.espejo.idx++; loadEspejoRound(); }
+    function endEspejo() {
+        saveBaul("🏆", "Resultado Espejo", `Acertaron ${state.espejo.score} de 6`);
+        showModal("🏁", "JUEGO TERMINADO", `Puntaje final: ${state.espejo.score}/6`, [{ txt: "MENÚ PRINCIPAL", primary: true, fn: resetAndHome }]);
+    }
+
+    // --- DESTINY LOGIC ---
+    function setDestinoMode(mode) {
+        state.destinoMode = mode;
+        const btnNormal = document.getElementById('btn-mode-normal');
+        const btnSpicy = document.getElementById('btn-mode-spicy');
+
+        if(mode === 'normal'){
+            btnNormal.className = 'btn btn-secondary';
+            btnSpicy.className = 'btn btn-outline';
+            btnSpicy.style.backgroundColor = 'transparent'; 
+            btnSpicy.style.color = 'var(--red-spicy)';
+        } else {
+            btnNormal.className = 'btn btn-outline';
+            btnNormal.style.backgroundColor = 'transparent'; 
+            btnNormal.style.color = 'var(--arcade-blue)';
+            btnSpicy.className = 'btn btn-secondary';
+            btnSpicy.style.backgroundColor = 'var(--red-spicy)';
+            btnSpicy.style.color = 'white';
+        }
+    }
+
+    function renderDestChips() {
+        document.getElementById('dest-chips').innerHTML = state.players.map(p => `<div class="player-chip">${p}</div>`).join('');
+    }
+
+    function startDestino() {
+        if(state.players.length < 2) return alert("Faltan jugadores");
+        state.destino.pool = [...DB.retos[state.destinoMode]].sort(() => Math.random() - 0.5);
+        state.destino.round = 0; state.turn = 0;
+        document.getElementById('destino-setup').style.display = 'none';
+        document.getElementById('destino-game').style.display = 'block';
+        updateDestTurn(); renderDestRound();
+    }
+
+    // NUEVA FUNCIÓN: Salir del juego pero volver a la selección de modo
+    function exitDestinoGame() {
+        document.getElementById('destino-game').style.display = 'none';
+        document.getElementById('destino-setup').style.display = 'block';
+        // Resetear variables de partida para empezar limpio si cambian modo
+        state.destino.round = 0;
+        state.turn = 0;
+    }
+
+    function updateDestTurn() {
+        document.getElementById('dest-turn').innerText = `TURNO DE: ${state.players[state.turn % state.players.length]}`;
+    }
+
+    function renderDestRound() {
+        const cont = document.getElementById('dest-deck');
+        cont.innerHTML = '';
+        const start = state.destino.round * 6;
+        const slice = state.destino.pool.slice(start, start + 6);
+        if(slice.length === 0) { state.destino.round = 0; state.destino.pool.sort(() => Math.random() - 0.5); return renderDestRound(); }
+
+        slice.forEach((text) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-front">${state.destinoMode === 'spicy' ? '🔥' : '❤️'}</div>
+                    <div class="card-back">
+                        <p>${text}</p>
+                        <button class="btn" style="font-size:0.7rem; padding:8px;" onclick="cardAction(event, '${text.replace(/'/g, "\\'")}')">¡CUMPLIDO!</button>
+                    </div>
+                </div>`;
+            card.onclick = () => { 
+                if(!card.classList.contains('flipped')) { 
+                    card.classList.add('flipped'); 
+                    state.turn++; 
+                    updateDestTurn(); 
+                }
+            };
+            cont.appendChild(card);
+        });
+    }
+
+    function cardAction(e, text) {
+        e.stopPropagation(); 
+        e.target.closest('.card').classList.add('completed');
+        showModal("🌟", "¡RETO CUMPLIDO!", text, [{ txt: "GUARDAR EN BAÚL", primary: true, fn: () => { saveBaul("🃏", "Reto Cumplido", text); closeModal(); } }, { txt: "OK", primary: false, fn: closeModal }]);
+    }
+    function refreshDestino() { state.destino.round++; renderDestRound(); }
+
+    // --- WHEEL LOGIC ---
+    function changeWheelCategory(cat) {
+        state.ruleta.category = cat;
+        
+        document.querySelectorAll('#ruleta .btn-outline').forEach(b => {
+            if(b.id.startsWith('cat-')) {
+                b.style.borderColor = 'var(--text-dark)'; 
+                b.style.backgroundColor = 'transparent';
+                b.style.color = 'var(--text-dark)';
+            }
+        });
+        
+        const activeBtn = document.getElementById(`cat-${cat}`);
+        activeBtn.style.borderColor = 'var(--red-love)';
+        activeBtn.style.backgroundColor = 'var(--pink-soft)';
+        
+        wheelOptions = [...wheelPresets[cat]];
+        initWheel();
+    }
+
+    function addCustomOption() {
+        const val = document.getElementById('custom-option-input').value.trim();
+        if(val) { 
+            wheelPresets[state.ruleta.category].push(val); 
+            wheelOptions = [...wheelPresets[state.ruleta.category]]; 
+            document.getElementById('custom-option-input').value = ''; 
+            initWheel(); 
+        }
+    }
+
+    function clearCurrentList() {
+        if(confirm("¿Estás seguro de borrar esta lista?")) { 
+            wheelPresets[state.ruleta.category] = []; 
+            wheelOptions = []; 
+            initWheel(); 
+        }
+    }
+
+    function updateWheelTurn() { document.getElementById('wheel-turn').innerText = `LE TOCA GIRAR A: ${state.ruleta.turn}`; }
+
+    function initWheel() {
+        const canvas = document.getElementById('wheel');
+        if(!canvas) return; 
+        const ctx = canvas.getContext('2d');
+        
+        if (wheelOptions.length === 0) { 
+            ctx.clearRect(0,0,300,300); 
+            ctx.font = "bold 20px Poppins"; 
+            ctx.fillStyle = "#594145"; 
+            ctx.textAlign = "center"; 
+            ctx.fillText("Lista vacía", 150, 150); 
+            return; 
+        }
+
+        const arc = (Math.PI * 2) / wheelOptions.length;
+        ctx.clearRect(0,0,300,300);
+        wheelOptions.forEach((opt, i) => {
+            ctx.beginPath();
+            ctx.fillStyle = i % 2 === 0 ? '#ffcad4' : '#ffffff';
+            ctx.moveTo(150,150); ctx.arc(150, 150, 140, i * arc, (i + 1) * arc);
+            ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#ff4d6d'; ctx.save();
+            ctx.translate(150, 150); ctx.rotate(i * arc + arc/2);
+            ctx.textAlign = "right";
+            ctx.font = "bold 14px Poppins"; 
+            ctx.fillText(opt.substring(0,12), 130, 5); 
+            ctx.restore();
+        });
+    }
+
+    function spinWheel() {
+        if(wheelOptions.length < 2) return alert("Añade al menos 2 opciones");
+        const extraSpin = 1800 + Math.random() * 360;
+        currentWheelRotation += extraSpin;
+        
+        const wheelEl = document.getElementById('wheel');
+        wheelEl.style.transition = "transform 4s cubic-bezier(0.1, 0, 0.1, 1)";
+        wheelEl.style.transform = `rotate(${currentWheelRotation}deg)`;
+        
+        setTimeout(() => { 
+            state.ruleta.turn = state.ruleta.turn === state.players[0] ? state.players[1] : state.players[0]; 
+            updateWheelTurn(); 
+        }, 4500);
+    }
+
+    // --- BAUL & UTILS ---
+    function saveBaul(icon, title, content) {
+        const items = JSON.parse(localStorage.getItem('cp_baul') || '[]');
+        items.push({ icon, title, content, date: new Date().toLocaleDateString() });
+        localStorage.setItem('cp_baul', JSON.stringify(items));
+    }
+
+    function renderBaul() {
+        const list = document.getElementById('baul-list');
+        const items = JSON.parse(localStorage.getItem('cp_baul') || '[]');
+        list.innerHTML = items.length ? '' : '<p style="text-align:center; color:var(--text-soft); margin-top: 30px;">El baúl está vacío...</p>';
+        items.reverse().forEach(i => {
+            list.innerHTML += `<div class="arcade-card" style="display:flex; gap:15px; padding:15px; margin:15px 0; align-items:center;"><span style="font-size:2rem;">${i.icon}</span><div><strong style="color:var(--red-love);">${i.title}</strong><br><span style="font-size:0.8rem; color:var(--text-dark);">${i.content}</span><br><small style="color:var(--text-soft);">${i.date}</small></div></div>`;
+        });
+    }
+
+    function showModal(icon, title, desc, btns) {
+        document.getElementById('modal-icon').innerText = icon;
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-desc').innerHTML = desc;
+        const cont = document.getElementById('modal-btns'); cont.innerHTML = '';
+        btns.forEach(b => {
+            const btn = document.createElement('button');
+            btn.className = b.primary ? 'btn' : 'btn btn-outline';
+            btn.innerText = b.txt; btn.onclick = b.fn; cont.appendChild(btn);
+        });
+        document.getElementById('modal').classList.add('open');
+    }
+
+    function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+    function shareApp() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'Juega a CouplePlay!',
+                url: window.location.href
+            }).catch(console.error);
+        } else {
+            const shareText = window.location.href;
+            showModal("🔗", "COMPARTIR", 
+                `<input type="text" readonly value="${shareText}" style="width:100%; text-align:center; font-size:0.8rem; margin-top:10px; color:var(--text-soft);">`, 
+                [{txt: "COPIAR", primary:true, fn: () => {
+                    navigator.clipboard.writeText(shareText).then(() => {
+                        alert("¡Enlace copiado!");
+                        closeModal();
+                    });
+                }}, {txt: "CERRAR", primary:false, fn: closeModal}]
+            );
+        }
+    }
+
+    // Init Logic
+    setTimeout(() => changeWheelCategory('cena'), 100);
+</script>
+</body>
+</html>
